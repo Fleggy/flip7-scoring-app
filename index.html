@@ -177,7 +177,7 @@ input.value=name;
 wrap.appendChild(input);
 }
 
-for(let i=0;i<4;i++) addPlayer();
+for(let i=0;i<3;i++) addPlayer();
 
 function startGame(){
 
@@ -265,9 +265,15 @@ game.rounds.push(round);
 saveGame();
 
 if(winnerFound){
-endGame();
-return;
+    endGame();
+    return;
 }
+
+alert(
+    'Round ' +
+    currentRound +
+    ' saved successfully!'
+);
 
 currentRound++;
 buildRoundInputs();
