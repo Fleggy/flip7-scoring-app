@@ -1,4 +1,4 @@
-const CACHE_NAME = 'flip7-v1';
+const CACHE_NAME = 'flip7-v2';
 
 const FILES_TO_CACHE = [
   './',
