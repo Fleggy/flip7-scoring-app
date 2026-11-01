@@ -108,6 +108,19 @@ top:0;
 left:0;
 z-index:999;
 }
+#lastRoundSummary{
+    margin-top:15px;
+    background:#263238;
+}
+
+#lastRoundSummary h3{
+    margin-top:0;
+    color:#90caf9;
+}
+
+button:disabled{
+    opacity:0.6;
+}
 </style>
 </head>
 <body>
@@ -134,8 +147,15 @@ Game In Progress - Round 1
 <div class="card">
 <div id="scoreInputs"></div>
 
+<div id="lastRoundSummary"
+     class="card hidden">
+</div>
+
 <button onclick="startVoice()">🎤 Voice Entry</button>
-<button onclick="saveRound()">Save Round</button>
+<button id="saveBtn"
+        onclick="saveRound()">
+    Save Round
+</button>
 </div>
 </div>
 
@@ -227,6 +247,7 @@ row.innerHTML=`
 type="number"
 min="0"
 max="80"
+inputmode="numeric"
 data-player="${player}"
 placeholder="0-80">
 `;
@@ -234,12 +255,47 @@ placeholder="0-80">
 holder.appendChild(row);
 });
 
-document.getElementById('roundLabel').innerText=
-`Game In Progress - Round ${currentRound}`;
+document.getElementById(
+    'roundLabel'
+).innerHTML =
+`
+<div>🎴 Game In Progress</div>
+<div>Round ${currentRound}</div>
+`;
 }
+function showLastRound(round){
 
+    let html =
+        "<h3>Previous Round Saved</h3>";
+
+    Object.entries(round)
+        .forEach(([player,score]) => {
+
+        html += `
+            <div>
+                <strong>${player}</strong>:
+                ${score}
+            </div>
+        `;
+
+    });
+
+    const box =
+        document.getElementById(
+            "lastRoundSummary"
+        );
+
+    box.innerHTML = html;
+
+    box.classList.remove("hidden");
+}
 function saveRound(){
+const btn =
+    document.getElementById(
+        "saveBtn"
+    );
 
+btn.disabled = true;
 const round={};
 
 let winnerFound=false;
@@ -248,7 +304,19 @@ document.querySelectorAll('#scoreInputs input').forEach(input=>{
 
 const player=input.dataset.player;
 
-const score=parseInt(input.value)||0;
+const enteredValue =
+    parseInt(input.value);
+
+const score =
+    isNaN(enteredValue)
+        ? 0
+        : Math.min(
+            80,
+            Math.max(
+                0,
+                enteredValue
+            )
+        );
 
 round[player]=score;
 
@@ -262,21 +330,24 @@ winnerFound=true;
 
 game.rounds.push(round);
 
+showLastRound(round);
+
 saveGame();
 
 if(winnerFound){
+
+    btn.disabled = false;
+
     endGame();
+
     return;
 }
 
-alert(
-    'Round ' +
-    currentRound +
-    ' saved successfully!'
-);
-
 currentRound++;
+
 buildRoundInputs();
+
+btn.disabled = false;
 }
 
 function endGame(){
