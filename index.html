@@ -145,6 +145,13 @@ Game In Progress - Round 1
         onclick="saveRound()">
     Save Round
 </button>
+
+<button id="undoBtn"
+        class="secondary"
+        onclick="undoLastRound()"
+        disabled>
+    ↩ Undo Last Round
+</button>
 </div>
 </div>
 
@@ -218,6 +225,10 @@ document.getElementById('setupScreen').classList.add('hidden');
 document.getElementById('gameScreen').classList.remove('hidden');
 
 saveGame();
+
+document.getElementById(
+    "undoBtn"
+).disabled = true;
 }
 
 function buildRoundInputs(){
@@ -237,8 +248,12 @@ type="number"
 min="0"
 max="80"
 inputmode="numeric"
+autocomplete="off"
+autocorrect="off"
+spellcheck="false"
 data-player="${player}"
-placeholder="0-80">
+placeholder="0-80"
+value="">
 `;
 
 holder.appendChild(row);
@@ -293,8 +308,12 @@ winnerFound=true;
 
 game.rounds.push(round);
 
+document.getElementById(
+    "undoBtn"
+).disabled = false;
 
 saveGame();
+
 
 if(winnerFound){
 
@@ -311,10 +330,61 @@ buildRoundInputs();
 
 btn.disabled = false;
 }
+function undoLastRound(){
 
+    if(game.rounds.length === 0){
+        return;
+    }
+
+    if(
+        !confirm(
+            "Undo the most recent round?"
+        )
+    ){
+        return;
+    }
+
+    const lastRound =
+        game.rounds.pop();
+
+    Object.entries(lastRound)
+        .forEach(([player,score]) => {
+
+        game.totals[player] -= score;
+
+    });
+
+    currentRound = Math.max(
+        1,
+        currentRound - 1
+    );
+
+    if(game.rounds.length === 0){
+
+        document
+            .getElementById(
+                "undoBtn"
+            )
+            .disabled = true;
+    }
+document.getElementById(
+    "undoBtn"
+).disabled = true;
+
+    saveGame();
+
+    buildRoundInputs();
+}
 function endGame(){
 
-localStorage.removeItem('flip7_current');
+document.getElementById(
+    "undoBtn"
+).disabled = true;
+
+localStorage.removeItem(
+    'flip7_current'
+);
+
 
 document.getElementById('gameScreen')
 .classList.add('hidden');
@@ -405,6 +475,11 @@ currentRound=data.currentRound;
 
 buildRoundInputs();
 
+document.getElementById(
+    "undoBtn"
+).disabled =
+    game.rounds.length === 0;
+	
 document.getElementById('setupScreen')
 .classList.add('hidden');
 
@@ -476,7 +551,6 @@ input.value=score;
 
 });
 
-alert('Voice scores entered');
 }
 
 function runConfetti(){
