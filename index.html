@@ -108,15 +108,7 @@ top:0;
 left:0;
 z-index:999;
 }
-#lastRoundSummary{
-    margin-top:15px;
-    background:#263238;
-}
 
-#lastRoundSummary h3{
-    margin-top:0;
-    color:#90caf9;
-}
 
 button:disabled{
     opacity:0.6;
@@ -147,9 +139,6 @@ Game In Progress - Round 1
 <div class="card">
 <div id="scoreInputs"></div>
 
-<div id="lastRoundSummary"
-     class="card hidden">
-</div>
 
 <button onclick="startVoice()">🎤 Voice Entry</button>
 <button id="saveBtn"
@@ -263,32 +252,6 @@ document.getElementById(
 <div>Round ${currentRound}</div>
 `;
 }
-function showLastRound(round){
-
-    let html =
-        "<h3>Previous Round Saved</h3>";
-
-    Object.entries(round)
-        .forEach(([player,score]) => {
-
-        html += `
-            <div>
-                <strong>${player}</strong>:
-                ${score}
-            </div>
-        `;
-
-    });
-
-    const box =
-        document.getElementById(
-            "lastRoundSummary"
-        );
-
-    box.innerHTML = html;
-
-    box.classList.remove("hidden");
-}
 function saveRound(){
 const btn =
     document.getElementById(
@@ -330,7 +293,6 @@ winnerFound=true;
 
 game.rounds.push(round);
 
-showLastRound(round);
 
 saveGame();
 
